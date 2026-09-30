@@ -43,9 +43,19 @@ print(a %/% b)
 print(a %% b)
 
 print(2 ^ 10)
+
+print(17 / 5)
+print( 17 %% 5)
+print(17 %/% 5)
+
+print (10 %% 3)
+print(10 %/% 3)
 ```
-Imagine sharing 17 cookies equally among 5 friends
+1. Imagine sharing 17 cookies equally among 5 friends
 17 %/% 5 - Each friend gets 3 whole cookies. 
 17 %% 5 - You have 2 cookies left over in the box
 17 / 5 - If you slice up those 2 leftovers, everyone gets 3.4 cookies total.
+
+2. I predicted the of 10 %% 3 is 1 because this operator gives the remainder (modulo), I predicted the output will be 3 because this operator gives the whole number quotient. 
+
 ## Part B - Basic Data Types: typeof(), class(), and mode()
