@@ -1,0 +1,176 @@
+---
+title: "RExercise#6_pavillon"
+author: "Drew Drazen Pavillon"
+date: "2026-11-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Part A — Creating Data Frames
+
+```{r}
+name <- c("Ana", "Ben", "Cid", "Dex", "Eli")
+age <- c(20, 21, 19, 22, 20)
+passed <- c(TRUE, TRUE, FALSE, TRUE, FALSE)
+```
+
+```{r}
+students <- data.frame(name = name, age = age, passed = passed)
+students
+```
+
+```{r}
+typeof(students$name)
+class(students$name)
+```
+
+```{r}
+courses <- data.frame(
+  course_code = c("IS101", "IS102", "IS103"),
+  units = c(3, 3, 2),
+  instructor = c("Dr. P. Reyes", "Dr. R. Santos", "Dr. S. Cruz")
+)
+
+courses
+```
+
+Question 1.
+
+if the column have unequal length the table structure would break because some rows have missing values for certain variables. 
+Error: Error in c(3, 3, ) : argument 3 is empty
+
+Question 2.
+
+Lists in R are heterogeneous data structures, meaning different elements in a list can store different data types. Atomic vectors in R are homogeneous, meaning all elements inside a single vector must be of the exact same data type.
+
+## Part B — Subsetting Data Frames
+
+```{r}
+students$age
+students[["age"]]
+students["age"]
+```
+
+```{r}
+students[2, ]
+```
+
+```{r}
+students[3, "name"]
+```
+
+```{r}
+students[students$passed == TRUE, ]
+```
+
+```{r}
+students[students$passed == TRUE & students$age > 19, ]
+```
+
+Question 3.
+
+```{r}
+class(students$age)
+class(students[["age"]])
+class(students["age"])
+```
+single brackets [] perform slicing. it return the selected column. while double brackets [[]] and the dollar sign perform extraction it go inside the container and pull out the atomic vector stored within that coloumn
+
+Question 4. 
+
+if I changed it to | or OR if one of the condition is true it will qualify to what I want to show, Elo will be shown even if the passed is false it will show because its greater than 19.
+
+## Part C — Data Frame Properties
+
+```{r}
+str(students)
+```
+
+```{r}
+dim(students)
+nrow(students)
+ncol(students)
+```
+
+```{r}
+names(students)
+```
+
+```{r}
+summary(students)
+str(students)
+```
+
+Question 5.
+
+for age R calculate the minimun, 1st quartile, median, mean, 3rd Quartile, maximum values.
+for passed it categorize false and true, it counts how many is false and true.
+for name R cannot perform calculation in raw text, so in return the length of the vector.
+
+Question 6.
+
+str() is best when cleaning or troubleshooting technical errors.
+summarry() is best when conducting analysis, it gives statistical insight helping you identify the data range potential outliers, and missing value.
+
+## Part D — Data Frame Operations
+
+```{r}
+students$year_level <- c(2, 3, 1, 4, 2)
+students
+```
+
+```{r}
+students$passed <- NULL
+students
+```
+
+```{r}
+students[order(students$age), ]
+```
+
+```{r}
+students[order(students$age, decreasing = TRUE), ]
+```
+Question 7.
+
+No, you cannot successfully filter by passed after removing it. Attempting students$passed == TRUE will return logical(0) because students$passed evaluates to NULL.
+
+Question 8.
+
+students$age extracts the numeric vector of ages: c(20, 21, 19, 22, 20). order(students$age) computes the row positions required to sort the vector from smallest to largest, returning the index vector c(3, 1, 5, 2, 4). Passing this vector into the row slot of matrix notation students[c(3, 1, 5, 2, 4), ] instructs R to retrieve row 3 first, followed by row 1, row 5, row 2, and row 4. Leaving the column slot blank after the comma , signals to R that all columns (name, age, year_level) should be kept for each reordered row, maintaining the integrity of each student's record.   
+
+## Part E — Critical Thinking Challenge
+
+```{r}
+grades <- data.frame(
+  name = c("Ana", "Ben", "Cid", "Dex", "Eli"),
+  midterm = c(85, 78, 92, 88, 70),
+  final = c(90, 82, 95, 84, 75)
+)
+
+grades$average <- (grades$midterm + grades$final) / 2
+
+grades$remarks <- ifelse(grades$average < 80, "Failed", "Passed")
+grades
+```
+Question 9.
+
+First, create a different column calculate a new column called grade_change <- grades$final - grades$midterm to quantify score increases or drops for each student. Secondly, filter students use logical subsetting (grades[grades$remarks == "Failed", ]) to extract all students who received a "Failed" remark into a separate view. Lastly,Use order() to sort the failed students by midterm score in ascending order, and then sort by grade_change. By comparing whether failing students primarily had low initial midterm scores or large negative grade drops, the instructor can determine which factor correlates more strongly with failing.
+
+
+## Conclusion 
+
+A data frame is a two-dimensional, grid-like data structure where rows correspond to individual observations and columns represent variables. Under the hood, a data frame is built as a named list of equal-length vectors, allowing each column to hold its own distinct data type (such as numeric, character, or logical). This flexibility makes data frames R's primary structure for real-world tabular datasets, as real data naturally combines quantitative metrics and qualitative descriptors within the same table.
+
+
