@@ -1,0 +1,186 @@
+---
+title: "RExercise#5_pavillon"
+author: "Drew Drazen Pavillon"
+date: "2026-11-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Part A - Creating Matrices
+
+```{r}
+m1 <- matrix(1:9, nrow = 3, ncol = 3)
+m1
+
+m2 <- matrix(1:9, nrow = 3, ncol = 3, byrow = TRUE)
+m2
+
+scores <- matrix(c(88, 92, 79, 95, 84, 90), nrow = 2, ncol = 3, byrow = TRUE)
+rownames(scores) <- c("Quiz1", "Quiz2")
+colnames(scores) <- c("Ana", "Ben", "Cid")
+
+scores
+```
+Question 1.
+
+By default (byrow = FALSE), R fills a matrix column by column filling down the first column completely, then moving to the second column, and so on. Setting byrow = TRUE changes this behavior so R fills the matrix row by row, filling across the first row from left to right before moving down to the next row.
+
+Question 2.
+```{r}
+mt <- matrix(1:8, nrow = 3, ncol = 3)
+mt
+```
+Answer: R uses its recycling rule to fill the remaining matrix slots. Since a 3x3 matrix requires 9 values and only 8 are provided (1:8), R restarts at the beginning of the vector and recycles the first value (1) for the 9th slot. 
+
+Warning: Warning in matrix(1:8, nrow = 3, ncol = 3) :
+  data length [8] is not a sub-multiple or multiple of the number of rows [3]
+
+## Part B — Subsetting Matrices
+```{r}
+scores[1, 2]
+
+scores[1, ]
+
+scores[, "Ben"]
+```
+
+```{r}
+scores[scores >= 90]
+```
+Question 3.
+
+Both class(scores[1, ]) and class(scores[, "Ben"]) return "numeric". R downgrades the 2D matrix structure to a 1D vector. By default, matrix indexing in R uses the parameter drop = TRUE. When subsetting yields a single row or column (reducing one of the matrix dimensions to length 1), R automatically "drops" the extra dimension to simplify memory usage and make 1D vector calculations straightforward. (To prevent this, you would specify scores[1, , drop = FALSE]).
+
+Question 4.
+
+Subsetting with a logical condition (scores >= 90) evaluates every element in the matrix individually. Because matching values can appear anywhere across the matrix and do not form a complete rectangular grid, R flattens the 2D matrix into a 1D sequence of values to extract them. When extracting a full row like scores[1, ], R can directly transfer the column headers as names for the resulting vector elements. However, logical filtering pulls arbitrary values out of their 2D row/column grid positions, stripping the row-column pair association and returning a plain, unnamed 1D vector.
+
+## Part C — Matrix Properties and Operations
+```{r}
+dim(scores)
+nrow(scores)
+ncol(scores)
+
+scores_t <- t(scores)
+scores_t
+dim(scores)
+dim(scores_t)
+```
+
+```{r}
+a <- matrix(1:4, nrow = 2)
+b <- matrix(5:8, nrow = 2)
+
+a + b
+
+a * b
+```
+
+```{r}
+a %*% b
+```
+Question 5.
+
+Element-Wise Multiplication (a * b) multiplies corresponding numbers that share the exact same row and column position in both matrices (e.g., position (1,1) in a times position (1,1) in b).
+
+Matrix Multiplication (a %*% b): Performs standard linear algebra matrix multiplication (dot products). The entry at position (i, j) in the resulting matrix is calculated by taking the i-th row of matrix a, multiplying its values element-by-element with the j-th column of matrix b, and summing those products together.
+
+Question 6.
+
+When you transpose a matrix, its rows become columns and its columns become rows. The row and column names must swap positions so that the labels stay attached to their original data elements. For example, "Ana", "Ben", and "Cid" originally labeled the columns (students), so after transposition, they must become the row names to correctly describe the rows corresponding to each student.
+
+## Part D — cbind() and rbind()
+```{r}
+scores_v2 <- cbind(scores, Dex = c(85, 91))
+scores_v2
+```
+
+```{r}
+scores_v3 <- rbind(scores, Quiz3 = c(80, 88, 93))
+scores_v3
+```
+Question 7.
+```{r}
+ cbind(scores, c(85, 91, 100))
+```
+
+R attempts to reconcile the dimension mismatch by using its recycling rule to expand the output to 3 rows, filling in recycled matrix values. However, because 2 rows is not a multiple of 3 elements, R triggers a warning message: Warning in cbind(scores, c(85, 91, 100)) :
+  number of rows of result is not a multiple of vector length (arg 2)
+  
+A matrix is a rigid 2-dimensional rectangular array where every column must contain the exact same number of rows, and every row must contain the exact same number of columns. cbind() requires matching row counts (or exact multiples) and rbind() requires matching column counts so that the resulting structure remains a complete grid without missing cells.
+
+Question 8.
+
+Use rbind() when appending new observations, events, or time-stamped entries (rows) over time while keeping the tracked metrics or attributes (columns) fixed.
+
+Tracking daily sales for a store where the columns are fixed variables (Date, Units_Sold, Total_Revenue).
+
+Each passing day produces a new record for those exact same 3 metrics. Appending each new day's data row-by-row with rbind() allows the dataset to grow vertically while keeping the column structure consistent. cbind(), on the other hand, is meant for adding new variables horizontally (such as adding a new quiz column to an existing group of students).
+  
+## Part E — Arrays: Creating and Subsetting
+```{r}
+arr <- array(1:12, dim = c(2, 3, 2))
+
+arr
+```
+
+```{r}
+arr[1, 2, 2]
+
+arr[, , 1]
+```
+
+```{r}
+dim(arr)
+```
+Question 9.
+
+1st Dimension (2): The number of rows in each 2D matrix slice.
+2nd Dimension (3): The number of columns in each 2D matrix slice.
+3rd Dimension (2): The number of layers (matrices) stacked along the third dimension.
+
+Question 10.
+
+Tracking student quiz scores across multiple academic terms.
+Rows: Individual students
+Columns: Quiz and assignments
+A 2D matrix can only represent two variables at once (such as Students multiply Quizzes). Trying to add a third variable (like time or semesters) into a 2D matrix forces you to either duplicate column names or flatten the data into an unwieldy structure, whereas a 3D array naturally stacks grid slices across time.
+
+## Part F — Critical Thinking Challenge
+```{r}
+class_a <- matrix(c(85, 90, 78, 92), nrow = 2, byrow = TRUE,
+                   dimnames = list(c("S1", "S2"), c("Midterm", "Final")))
+class_b <- matrix(c(88, 84, 95, 91), nrow = 2, byrow = TRUE,
+                   dimnames = list(c("S3", "S4"), c("Midterm", "Final")))
+
+all_students <- rbind(class_a, class_b)
+
+all_students
+```
+
+```{r}
+rowMeans(all_students)
+```
+
+Question 11.
+
+rbind() (row-bind) was chosen because class_a and class_b represent two distinct groups of students (new rows) evaluated on the exact same exams. Stacking them vertically adds new rows to the combined matrix without altering the grade columns. Both matrices shared identical column names ("Midterm" and "Final"), but contained distinct row names ("S1", "S2" vs. "S3", "S4"). Shared column names indicate that the variables are the same across datasets, meaning the matrices should be combined by rows.
+
+Question 12.
+
+Pass all 5 class matrices into a single rbind() function call (e.g., rbind(class_1, class_2, class_3, class_4, class_5)) to stack all student records vertically into one master matrix. Call dim() on the final matrix. The result will display two numbers: the first number (rows) should equal the sum of all students across all 5 classes, and the second number (columns) must equal 2 (confirming that Midterm and Final remained properly aligned).
+
+## Conclusion
+
+A matrix is strictly a two-dimensional data structure organized into rows and columns, whereas an array extends this concept into three or more dimensions by stacking multiple 2D matrices into layers. Functions like rbind() and cbind() provide an efficient way to expand matrices by binding new observations (rows) or new variables (columns). In a real-world dataset, rbind() would be useful for combining separate daily transaction logs into a single monthly sales matrix, while cbind() would be ideal for attaching newly calculated metrics—such as tax or customer loyalty points—as new columns alongside existing sales data.
