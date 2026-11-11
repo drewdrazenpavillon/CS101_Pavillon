@@ -2,7 +2,10 @@
 title: "RPractical_pavillon"
 author: "Drew Drazen Pavillon"
 date: "2026-11-11"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
