@@ -1,0 +1,150 @@
+---
+title: "RExercise#7_pavillon"
+author: "Drew Drazen Pavillon"
+date: "2026-11-12"
+output: html_document
+---
+## Part A - Creating Data Frames
+
+Q1.
+
+```{r}
+Respondent <- 1:20
+Sex <- c(2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2)
+FathersOccupation <- c(1, 3, 3, 3, 1, 2, 3, 1, 1, 1, 3, 2, 1, 3, 3, 1, 3, 1, 2, 1)
+PersonsAtHome <- c(5, 7, 3, 8, 5, 9, 6, 7, 8, 4, 7, 5, 4, 7, 8, 8, 3, 11, 7, 6)
+SiblingsAtSchool <- c(6, 4, 4, 1, 2, 1, 5, 3, 1, 2, 3, 2, 5, 5, 2, 1, 2, 5, 3, 2)
+TypesOfHouses <- c(1, 2, 3, 1, 1, 3, 3, 1, 2, 3, 2, 3, 2, 2, 3, 3, 3, 3, 3, 2)
+
+c(
+  length(Respondent),
+  length(Sex),
+  length(FathersOccupation),
+  length(PersonsAtHome),
+  length(SiblingsAtSchool),
+  length(TypesOfHouses)
+)
+```
+
+```{r}
+survey <- data.frame(
+  Respondent = Respondent,
+  Sex = Sex,
+  FathersOccupation = FathersOccupation,
+  PersonsAtHome = PersonsAtHome,
+  SiblingsAtSchool = SiblingsAtSchool,
+  TypesOfHouses = TypesOfHouses
+)
+
+print(survey)
+```
+
+a.
+
+```{r}
+str(survey)
+summary(survey)
+```
+
+str(survey) shows that survey is a data.frame containing 20 observations across 6 numeric/integer variables.
+summary(survey) provides the minimum, first quartile, median, mean, third quartile, and maximum for each column.
+
+b.
+
+```{r}
+dim(survey)
+nrow(survey)
+ncol(survey)
+```
+
+c.
+
+```{r}
+survey$Sex <- factor(
+  survey$Sex,
+  levels = c(1, 2),
+  labels = c("Male", "Female")
+)
+
+survey$FathersOccupation <- factor(
+  survey$FathersOccupation,
+  levels = c(1, 2, 3),
+  labels = c("Farmer", "Driver", "Others")
+)
+
+survey$TypesOfHouses <- factor(
+  survey$TypesOfHouses,
+  levels = c(1, 2, 3),
+  labels = c("Wood", "Semi-Concrete", "Concrete")
+)
+
+str(survey)
+summary(survey)
+```
+
+d.
+
+```{r}
+sapply(survey, mean)
+```
+
+e.
+
+```{r}
+survey[1:5, ]
+```
+
+f.
+
+```{r}
+types_houses <- survey$TypesOfHouses
+print(types_houses)
+```
+
+g.
+
+```{r}
+subset(survey, Sex == "Male" & FathersOccupation == "Farmer")
+```
+
+h.
+
+```{r}
+subset(survey, Sex == "Female" & SiblingsAtSchool >= 5)
+```
+Q2.
+
+If one vector had a missing or extra entry, R would either throw an error or silently recycle values, shifting the rows out of alignment and pairing one respondent's answers with another person's survey record.
+
+Q3.
+
+Treating a categorical variable like Sex as a quantity to average is misleading because 1 and 2 are labels rather than measurable amounts.
+
+Q4.
+
+If someone unfamiliar with the legend inspects the output filtered on Sex == 1, they will only see the number 1 under the Sex column and could easily misinterpret it as meaning 1 person or a ranking rather than Male. This illustrates a major problem with working on raw coded data before labeling. Numeric codes are not self-explanatory on their own, which makes the results nnclear and increases the risk of misinterpretation whenever the data is shared or reviewed without the legend.
+
+Q5.
+
+```{r}
+sum(survey$Sex == "Male")
+```
+
+Out of the 20 respondents, only 3 are Male, this very small sample size significantly reduces confidence when generalizing patterns from this dataset to a larger population, because a subgroup of only 3 males is highly sensitive to random individual variation and cannot reliably represent all males in a broader population. For instance, none of those 3 males happened to have a father who is a farmer.
+
+Q6.
+
+```{r}
+summary(survey)
+```
+
+R does not know by itself that Sex and TypesOfHouses are categorical because their values were entered as plain numbers (1, 2, and 3), causing R to store them as standard numeric vectors and automatically calculate quantitative statistics like minimum, median, mean, and maximum for every column. This highlights the difference between how data is stored and what the data actually means.
+
+Q7.
+
+```{r}
+mean(survey$PersonsAtHome)
+mean(as.numeric(survey$Sex))
+```
+
+PersonsAtHome has a mean of 6.4 , while Sex has a mean of 1.85. The mean of PersonsAtHome is meaningful to report because PersonsAtHome is an actual count of people in each household, so the average accurately describes the typical household size among the 20 respondents. the mean of Sex 1.85 is not meaningful to report because Sex is a categorical variable where 1 is Male and 2 is Female are numeric codes rather than quantities, making an average between them uninterpretable.
